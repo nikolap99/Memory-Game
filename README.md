@@ -9,6 +9,8 @@ Made using:
   - Bootstrap
   - JavaScript
   - JQuery
-
-  **This is open-source. You can use code in any way, but images are copyrighted.**
+<br/>
 <span><br/><img src="https://raw.githubusercontent.com/nikolap99/Memory-Game/master/assets/images/screenshot.png" /></span>
+<br/>
+  **This is open-source. You can use code in any way, but images are copyrighted.**
+
