@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Memory Game</title>
+	<!-- CSS -->
+	<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<!-- Custom styles CSS -->
+	<link href="assets/css/style.css" rel="stylesheet" media="screen">
+	<link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+    <script src="assets/js/modernizr.custom.js"></script>
+	<script>
+	<!-- Script start -->
+		var memory_array = ['assets/images/random1.png','assets/images/random1.png','assets/images/random2.png','assets/images/random2.png','assets/images/random3.png','assets/images/random3.png','assets/images/random4.png','assets/images/random4.png','assets/images/random5.png','assets/images/random5.png','assets/images/random6.png','assets/images/random6.png','assets/images/random7.png','assets/images/random7.png','assets/images/random8.png','assets/images/random8.png'];
+		var memory_values = [];
+		var memory_tile_ids = [];
+		var tileIds = [];
+		var tiles_flipped = 0;
+		var tile1;
+		var tile2;
+		Array.prototype.memory_tile_shuffle = function(){
+			var i = this.length, j, temp;
+			while(--i > 0){
+				j = Math.floor(Math.random() * (i+1));
+				temp = this[j];
+				this[j] = this[i];
+				this[i] = temp;
+			}
+		}
+		function newBoard(){
+			tiles_flipped = 0;
+			var output = '';
+			memory_array.memory_tile_shuffle();
+			for(var i = 0; i < memory_array.length; i++){
+				if(i<12){
+				output += '<div class="col-sm-2 col-xs-2 cusPad" ><img id="tile_'+i+'" src="assets/images/tile.png" class="tile" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+				}
+				else if(i==12){
+				output += '<div class="col-sm-2 col-xs-2 col-xs-offset-2 cusPad" ><img id="tile_'+i+'" src="assets/images/tile.png" class="tile" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+				}
+				else if(i>12){
+				output += '<div class="col-sm-2 col-xs-2 cusPad" ><img id="tile_'+i+'" src="assets/images/tile.png" class="tile" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+				}
+			}
+			document.getElementById('memory_board').innerHTML = output;
+		}
+		function memoryFlipTile(tile,val){
+			tile.src = val;
+			if(tile.innerHTML == "" && memory_values.length <= 2){
+				if(memory_values.length == 0){
+					memory_values.push(val);
+					memory_tile_ids.push(tile.id);
+					tile.innerHTML = ".";
+				}
+				else if(memory_values.length == 1){
+					memory_values.push(val);
+					memory_tile_ids.push(tile.id);
+					tile.innerHTML = ".";
+					if(memory_values[0] == memory_values[1]){
+						if(memory_tile_ids[0] == memory_tile_ids[1]){
+							var tile_1 = document.getElementById(memory_tile_ids[0]);
+							var tile_2 = document.getElementById(memory_tile_ids[1]);
+							tile_1.src = 'assets/images/tile.png';
+							tile_2.src = 'assets/images/tile.png';
+							//Clear both arrays
+							memory_values = [];
+							memory_tile_ids = [];
+						}
+						else{
+						tiles_flipped += 2;
+						var tile_1 = document.getElementById(memory_tile_ids[0]);
+						var tile_2 = document.getElementById(memory_tile_ids[1]);
+						tile_1.style.pointerEvents = "none";
+						tile_2.style.pointerEvents = "none";
+						//Clear both arrays
+						memory_values = [];
+						memory_tile_ids = [];
+						tileIds = [];
+						//Check to see if the whole board is cleared
+						}
+					}
+					else{
+						function flip2Back(){
+							//Flip the 2 tiles back over
+							var tile_1 = document.getElementById(memory_tile_ids[0]);
+							var tile_2 = document.getElementById(memory_tile_ids[1]);
+							tile_1.src = 'assets/images/tile.png';
+							tile_2.src = 'assets/images/tile.png';
+							//Clear both arrays
+							memory_values = [];
+							memory_tile_ids = [];
+						}
+						setTimeout(flip2Back, 350);
+					}
+				}
+				else{
+							memory_values.push(val);
+							memory_tile_ids.push(tile.id);
+						//Flip the 2 tiles back over
+							var tile_1 = document.getElementById(memory_tile_ids[0]);
+							var tile_2 = document.getElementById(memory_tile_ids[1]);
+							var tile_3 = document.getElementById(memory_tile_ids[2]);
+							tile_1.src = 'assets/images/tile.png';
+							tile_2.src = 'assets/images/tile.png';
+							tile_3.src = 'assets/images/tile.png';
+							//Clear both arrays
+							memory_values = [];
+							memory_tile_ids = [];
+				}
+			}
+		}
+		<!-- Script end -->
+		<!-- Timer start -->
+		function tajmer(){
+		var seconds_left = 45;
+		var interval = setInterval(function() {
+			document.getElementById('timer_div').innerHTML = --seconds_left;
+			if(tiles_flipped == memory_array.length){
+							document.getElementById('endGame').innerHTML = "Congratulations, you won!";
+							document.getElementById('timer_div').innerHTML = '<a href="index.html"><img src="assets/images/icon1.png" class="slika"></a>';
+						}
+			if (seconds_left < 0){
+				clearInterval(interval);
+				document.getElementById('timer_div').innerHTML = 0;
+				if(tiles_flipped <= 1){
+					<!--alert("VAŽNO JE UČESTVOVATI! POKUŠAJTE PONOVO :)");-->
+					document.getElementById('endGame').innerHTML = "It's not good enough, try again! :)";
+				}
+				else if(tiles_flipped >= 10 && tiles_flipped <= 15){
+					<!--alert("BRAVO! PRONAŠLI STE 7/6/5 PAROVA. PREUZMITE POKLON I ISKORISTITE NOVOGODIŠNJE POPUSTE OD 5.000 ILI 10.000 DINARA NA SVE TELEFONE U TELENORU");-->
+					document.getElementById('endGame').innerHTML = "Good Job! You found 7/6/5 pairs.";
+				}
+				else if(tiles_flipped > 1 && tiles_flipped <= 8){
+					<!--alert("PRONAŠLI STE 4/3/2 PARA / 1 PAR. PREUZMITE POKLON I ISKORISTITE NOVOGODIŠNJE POPUSTE OD 5.000 ILI 10.000 DINARA NA SVE TELEFONE U TELENORU");-->
+					document.getElementById('endGame').innerHTML = "You found 4/3/2 pairs / 1 pair.";
+				}
+				document.getElementById('timer_div').innerHTML = '<a href="index.html"><img src="assets/images/icon1.png" class="slika"></a>';
+			}
+		}, 1000);
+		}
+		<!-- Timer end -->
+	</script>
+</head>
+<body onload="tajmer();">	
+	<section id="home1">
+	<div class="home-overlay"></div>
+	<!-- Container start -->
+	<section id="pocetna">
+	<div id="timer_div">45</div>
+	<div id="endGame"></div>
+	<div class="intro1">
+		<div class="container col-sm-11">
+			<div class="col-sm-11 col-sm-offset-1 col-xs-12 col-xs-offset-1">
+				<center>
+					<div class="strip1">
+					<div>
+						<div id="memory_board" class="row">
+
+						</div>
+						<script>newBoard();</script>
+					</div>
+					
+					</div>
+				</center>
+			</div>
+		</div><!-- .container -->
+	</div>		
+	</section>
+	<!-- Container end -->
+	<!-- Javascript files -->
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/js/jquery.parallax-1.1.3.js"></script>
+	<script src="assets/js/imagesloaded.pkgd.js"></script>
+	<script src="assets/js/jquery.sticky.js"></script>
+	<script src="assets/js/wow.min.js"></script>
+    <script src="assets/js/waypoints.min.js"></script>
+	<script src="assets/js/custom.js"></script>
+</body>
+</html>
